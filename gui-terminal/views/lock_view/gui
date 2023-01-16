@@ -1,0 +1,120 @@
+import tkinter as tk
+from tkinter import ttk
+import tkinter.simpledialog as sd
+import tkinter.messagebox as messagebox
+
+lock_code = "1234"
+window = tk.Tk()
+
+window.title("Lock Screen")
+window.configure(bg="black")
+window.geometry("1024x600")
+
+def check_code():
+  entered_code = code_entry.get()
+  if entered_code == lock_code:
+    window.withdraw()
+    next_page()
+  else:
+    label.config(text="Incorrect code, try again", fg="red")
+    code_entry.delete(0, 'end')
+
+def delete_number():
+  code_entry.delete(0,'end')
+  
+def insert_number(num):
+  code_entry.insert('end', num)
+
+label = tk.Label(window, text="Enter code to unlock", font=("Bahnschrift SemiCondensed", 14), bg="black", fg="white")
+label.pack()
+label.pack(pady=20)
+code_entry = tk.Entry(window, show="*", font=("Bahnschrift SemiCondensed", 14), bg="black", fg="white", justify="center", width=23)
+code_entry.pack()
+code_entry.pack(pady=10)
+frame = tk.Frame(window)
+frame.pack()
+frame.configure(bg="black") 
+
+style = ttk.Style()
+style.configure("Rounded.TButton", relief="sunken", borderradius=10)
+
+for i in range(1,10):
+  button = tk.Button(frame, text=str(i), font=("Bahnschrift SemiCondensed", 14), bg="grey30", fg="black", activebackground="green", relief="sunken", width=6, height=2, command=lambda i=i: insert_number(i))
+  button.grid(row=((i-1)//3), column=((i-1)%3),padx=5,pady=5)
+
+button = tk.Button(frame, text=str(0), font=("Bahnschrift SemiCondensed", 14), bg="grey30", fg="black", activebackground="green", relief="sunken", width=6, height=2, command=lambda i=i: insert_number(0))
+button.grid(row=(3), column=(1),padx=5,pady=5)
+delete_button = tk.Button(frame, text="Reset", font=("Bahnschrift SemiCondensed", 14), bg="red", activebackground="grey30", relief="sunken", width=6, height=2, command=delete_number)
+delete_button.grid(row=3, column=0)
+submit_button = tk.Button(frame, text="Submit", font=("Bahnschrift SemiCondensed", 14), bg="green", activebackground="grey30", relief="sunken", width=6, height=2, command=check_code)
+submit_button.grid(row=3, column=2)
+
+def next_page():
+    global next_window, tracker_frame
+    next_window = tk.Tk()
+    next_window.title("Home")
+    next_window.configure(bg="black")
+    next_window.geometry("1024x600")
+    label = tk.Label(next_window, text="Press on a tracker to start tracking", font=("Bahnschrift SemiCondensed", 14), bg="black", fg="white", justify="right")
+    label.pack(pady=10)
+
+    add_button = tk.Button(next_window, text="Add", font=("Bahnschrift SemiCondensed", 14), bg="grey30", activebackground="grey", relief="sunken", width=5, height=2, command=add_tracker)
+    add_button.pack(side="right")
+    
+    delete_button = tk.Button(next_window, text="Delete", font=("Bahnschrift SemiCondensed", 14), bg="grey30", activebackground="grey", relief="sunken", width=5, height=2, command=delete_tracker,padx=10)
+    delete_button.pack(side="right", anchor="w")
+    tracker_frame = tk.Frame(next_window, bg="black",padx=100)
+    tracker_frame.pack()
+    create_tracker_buttons()
+    sign_out_button = tk.Button(next_window, text="Sign Out", font=("Bahnschrift SemiCondensed", 14), bg="grey30", activebackground="grey", relief="sunken", width=10, height=2, command=sign_out)
+    sign_out_button.pack(side="left", anchor="sw")
+
+def add_tracker():
+    style = ttk.Style()
+    style.theme_use("vista")
+    new_tracker = sd.askstring("Add Tracker", "Enter the name of the new tracker")
+    if new_tracker:
+        trackers.append(new_tracker)
+        create_tracker_buttons()
+        messagebox.showinfo("Add Tracker", "Tracker added successfully")
+        next_window.update()
+
+def sign_out():
+  global tracker_num
+
+  code_entry.delete(0, 'end')
+  label.config(text="Enter code to unlock", fg="white")
+  next_window.destroy()
+  window.deiconify()
+  
+def delete_tracker():
+    style = ttk.Style()
+    style.theme_use("clam")
+    deleted_tracker = sd.askstring("Delete Tracker", "Enter the name of the tracker to delete")
+    if deleted_tracker in trackers:
+        trackers.remove(deleted_tracker)
+        for widget in tracker_frame.winfo_children():
+            widget.destroy()
+        create_tracker_buttons()
+        messagebox.showinfo("Delete Tracker", "Tracker Deleted successfully")
+        next_window.update()
+    else:
+        messagebox.showerror("Delete Tracker", "No such tracker found")
+
+tracker_num = 1
+trackers = ["Tracker 1", "Tracker 2"]
+def create_tracker_buttons():
+    global tracker_num
+    for i in range(1, len(trackers)+1):
+        row_index = (i - 1) // 4
+        column_index = (i - 1) % 4
+        tracker_button = tk.Button(tracker_frame, text=trackers[i-1], font=("Bahnschrift SemiCondensed", 14), bg="grey30", activebackground="grey", relief="sunken", width=10, height=2, command=lambda i=i: track_selected(i))
+        tracker_button.grid(row=row_index, column=column_index, padx=10, pady=10)
+
+def track_selected(i):
+    if i == 1:
+        track1_function()
+    elif i == 2:
+        track2_function()
+
+window.mainloop()
