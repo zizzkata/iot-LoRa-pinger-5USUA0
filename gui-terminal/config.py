@@ -9,3 +9,9 @@ button_font: str = ("Bahnschrift SemiCondensed", 14)
 # Data paths
 users_file_path: str = relative_path + "\\data\\user.json"
 devices_file_path: str = relative_path + "\\data\\devices.json"
+
+# Serial port
+serial_port: str = "ttyS3"
+serial_baudrate: int = 9600
+enable_daemon: bool = True
+status_request_interval: int = 3
