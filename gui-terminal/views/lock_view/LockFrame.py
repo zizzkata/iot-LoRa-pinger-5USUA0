@@ -29,7 +29,7 @@ class LockFrame(Frame):
             bg=center_label_bg,
             fg=center_label_fg,
         )
-        self.password_entry = Entry(self, show="*", font=header_font, bg="white", fg="white", justify="center", width=23)
+        self.password_entry = Entry(self, show="*", font=header_font, bg="black", fg="white", justify="center", width=23)
         # self.center_label.pack()
         self.center_label.pack(pady=20)
         # self.password_entry.pack()
