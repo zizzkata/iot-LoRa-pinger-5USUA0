@@ -1,26 +1,39 @@
 from tkinter import *
 from config import *
-from views.lock_views.LockKeypad import *
+from views.lock_view.LockKeypad import *
+from views.home_view.HomeFrame import *
+import controllers.lock_controller as lc
 
 center_label_text: str = "Enter code to unlock"
 center_label_fg: str = "white"
 center_label_bg: str = "black"
 
 class LockFrame(Frame):
+
+    def get_input(self):
+        return self.password_entry.get()
+
     def keypad_number_handler(self, number: int):
-        # self.password_entry.append(number)
-        pass
+        self.password_entry.insert(END, number)	
 
     def keypad_accept_handler(self):
-        pass
+        lc.unlock_screen(self.get_input(), self.unlock_screen_callback)
 
+    def unlock_screen_callback(self, success):
+        if success:
+            self.pack_forget()
+            self.destroy()
+            self.window.set_frame(HomeFrame(self.window))
+        else:
+            print("Incorrect password")
+        # self.password_entry.delete(0, END)
+    
     def keypad_delete_handler(self):
-        pass
-
+        self.password_entry.delete(0, END)
 
     def __init__(self, window) -> None:
         super().__init__(window)
-        self.password_entry = []
+        self.window = window
         self.pack()
         self.configure(bg="black")
         self.center_label = Label(
@@ -29,8 +42,8 @@ class LockFrame(Frame):
             bg=center_label_bg,
             fg=center_label_fg,
         )
-        self.password_entry = Entry(self, show="*", font=header_font, bg="white", fg="white", justify="center", width=23)
-        # self.center_label.pack()
+        self.password_entry = Entry(self, show="*", font=header_font, bg="black", fg="white", justify="center", width=23)
+        self.center_label.pack()
         self.center_label.pack(pady=20)
         # self.password_entry.pack()
         self.password_entry.pack(pady=10)

@@ -39,7 +39,7 @@ class LockKeypad(Frame):
                     keypad_button_relief,
                     keypad_button_width,
                     keypad_button_height,
-                    self.insert_number_handler(value)
+                    lambda x = value: self.insert_number_handler(x)
                     )
             )
         accept_button = self.create_button(
@@ -52,7 +52,7 @@ class LockKeypad(Frame):
             keypad_button_relief,
             keypad_button_width,
             keypad_button_height,
-            self.accept_handler()
+            self.accept_handler
         )
         button_list.append(accept_button)
         delete_button = self.create_button(
@@ -65,7 +65,7 @@ class LockKeypad(Frame):
             keypad_button_relief,
             keypad_button_width,
             keypad_button_height,
-            self.delete_handler()
+            self.delete_handler
         )
         button_list.append(delete_button)
         return button_list

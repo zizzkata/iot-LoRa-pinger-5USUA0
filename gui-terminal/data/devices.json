@@ -1,0 +1,14 @@
+[
+    {
+        "id": "1",
+        "name": "John tag",
+        "last_ping": "2010/01/01",
+        "registered": "2010/01/01"
+    },
+    {
+        "id": "2",
+        "name": "Ivan tag",
+        "last_ping": "2010/01/01",
+        "registered": "2010/01/01"
+    }
+]

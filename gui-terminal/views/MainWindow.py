@@ -1,6 +1,6 @@
 from tkinter import *
 from config import *
-from views.lock_views.LockFrame import LockFrame
+from views.lock_view.LockFrame import LockFrame
 
 class MainWindow(Tk):
     def __init__(self):
