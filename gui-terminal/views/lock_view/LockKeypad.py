@@ -105,10 +105,11 @@ class LockKeypad(Frame):
         self.insert_number_handler = insert_number_handler
         self.accept_handler = accept_handler
         self.delete_handler = delete_handler
-        self.pack()
+        # self.pack()
         # self.configure(bg="black")
         self.style = ttk.Style()
         self.style.configure(
             "Rounded.TButton", relief="sunken", borderradius=border_radius)
         self.keypad_numbers_object.append(
             self.create_buttons())
+        self.grid(row=4, column=0, pady=10)

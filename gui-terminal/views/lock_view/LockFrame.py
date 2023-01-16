@@ -34,7 +34,7 @@ class LockFrame(Frame):
     def __init__(self, window) -> None:
         super().__init__(window)
         self.window = window
-        self.pack()
+        # self.pack()
         self.configure(bg="black")
         self.center_label = Label(
             self,
@@ -43,10 +43,8 @@ class LockFrame(Frame):
             fg=center_label_fg,
         )
         self.password_entry = Entry(self, show="*", font=header_font, bg="black", fg="white", justify="center", width=23)
-        self.center_label.pack()
-        self.center_label.pack(pady=20)
-        # self.password_entry.pack()
-        self.password_entry.pack(pady=10)
+        self.center_label.grid(row=0, column=0, pady=40)
+        self.password_entry.grid(row=1, column=0, pady=20)
         self.keypad_frame = LockKeypad(
             self,
             self.keypad_number_handler,
