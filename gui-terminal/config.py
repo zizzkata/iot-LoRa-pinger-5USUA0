@@ -15,5 +15,5 @@ private_key_file_path: str = relative_path + "\\data\\key"
 # Serial port
 serial_port: str = "ttyS3"
 serial_baudrate: int = 9600
-enable_daemon: bool = False
+enable_daemon: bool = True
 status_request_interval: int = 3
