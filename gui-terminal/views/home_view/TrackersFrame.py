@@ -2,6 +2,7 @@ from tkinter import *
 from config import *
 import controllers.trackers_controller as tc
 from views.home_view.TrackerButton import TrackerButton
+from views.tracker_settings_view.TrackerInfo import TrackerInfo
 
 number_trackers_row: int = 5
 
@@ -43,10 +44,11 @@ class TrackersFrame(Frame):
         print(tracker)
     
     def tracker_handler_settings(self, tracker: dict):
-        print("HOLD")
+        settings = TrackerInfo(self.window, tracker)
 
     def __init__(self, window) -> None:
         super().__init__(window)
+        self.window = window
         self.tracker_buttons = []
         self.configure(bg="black")
         tc.load_trackers(self.add_trackers)
