@@ -5,14 +5,18 @@ import time
 
 daemon_sleep_time = 0.5
 lock = Lock()
+serial = None
 
 jobs = []
 
 def post_job(target, args):
-    global jobs, lock
-    lock.acquire()
-    jobs.append((target, args))
-    lock.release()
+    global jobs, lock, serial
+    if serial:
+        lock.acquire()
+        jobs.append((target, args))
+        lock.release()
+    else:
+        print("Serial not connected")
 
 def run_job(serial: SerialCommunicator):
     global jobs, lock
@@ -20,24 +24,33 @@ def run_job(serial: SerialCommunicator):
     job_run = False
     if len(jobs) > 0:
         (target, args) = jobs.pop(0)
-        # do smt    
+        # do smt
+        print((target, args))    
     lock.release()
     return job_run
     
 def serial_daemon():
-    global jobs, lock
+    global serial, jobs, lock
+    if not enable_daemon:
+        return
     print("Serial daemon started")
     last_time_status_sent = time.time()
-    serial = SerialCommunicator(serial_port, serial_baudrate)
-    while True:
-        if (time.time() - last_time_status_sent) > status_request_interval:
-            post_job(serial.send, ("status",))
-            last_time_status_sent = time.time()
-        run_job(serial)
-        time.sleep(daemon_sleep_time)
+    try:
+        serial = SerialCommunicator(serial_port, serial_baudrate)
+    except Exception as e:
+        print("Failed to connect to serial port")
+        print(e)
+    if serial:
+        while True:
+            if (time.time() - last_time_status_sent) > status_request_interval:
+                post_job(serial.send, ("status",))
+                last_time_status_sent = time.time()
+            run_job(serial)
+            time.sleep(daemon_sleep_time)
 
 serialThread = Thread(target=serial_daemon, args=())
 serialThread.daemon = True
 
-if enable_daemon:
+def start_serial_daemon():
+    global serialThread
     serialThread.start()

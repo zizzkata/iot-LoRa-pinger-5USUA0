@@ -2,7 +2,7 @@ from serial import *
 
 class SerialCommunicator(Serial):
     def __init__(self, port, baudrate, timeout=1, **kwargs):
-        super(SerialCommunicator, self).__init__(port, baudrate, timeout, **kwargs)
+        super().__init__(port=port, baudrate=baudrate, timeout=timeout, **kwargs)
         self.open()
     
     def send(self, data: str):
