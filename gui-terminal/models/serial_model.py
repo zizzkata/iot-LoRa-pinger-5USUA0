@@ -6,8 +6,13 @@ import time
 daemon_sleep_time = 0.5
 lock = Lock()
 serial = None
+running = True
 
 jobs = []
+
+def kill_deamon():
+    global running
+    serial = False
 
 def post_job(target, args):
     global jobs, lock, serial
@@ -30,7 +35,7 @@ def run_job(serial: SerialCommunicator):
     return job_run
     
 def serial_daemon():
-    global serial, jobs, lock
+    global serial, jobs, lock, running
     if not enable_daemon:
         return
     print("Serial daemon started")
@@ -41,12 +46,13 @@ def serial_daemon():
         print("Failed to connect to serial port")
         print(e)
     if serial:
-        while True:
+        while running:
             if (time.time() - last_time_status_sent) > status_request_interval:
                 post_job(serial.send, ("status",))
                 last_time_status_sent = time.time()
             run_job(serial)
             time.sleep(daemon_sleep_time)
+        print("Serial daemon stopped")
 
 serialThread = Thread(target=serial_daemon, args=())
 serialThread.daemon = True
