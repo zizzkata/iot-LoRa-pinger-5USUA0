@@ -1,17 +1,9 @@
 from tkinter import *
 from config import *
 import controllers.trackers_controller as tc
+from views.home_view.TrackerButton import TrackerButton
 
 number_trackers_row: int = 5
-
-tracker_button_bg: str = "grey30"
-tracker_button_fg: str = "white"
-tracker_button_active_background : str = "green"
-tracker_button_relief: str = "sunken"
-tracker_button_width: int = 10
-tracker_button_height: int = 2
-tracker_button_pady: int = 10
-tracker_button_padx: int = 10
 
 class TrackersFrame(Frame):
 
@@ -24,7 +16,8 @@ class TrackersFrame(Frame):
                     value['name'],
                     row_index,
                     column_index,
-                    lambda x = value: self.tracker_handler(x)
+                    lambda x = value: self.tracker_handler(x),
+                    lambda x = value: self.tracker_handler_settings(x)
                 )
             )
 
@@ -33,30 +26,24 @@ class TrackersFrame(Frame):
         text: str,
         row_index: int,
         column_index: int,
-        callback: callable
+        callback_click: callable,
+        callback_hold: callable
     ) -> Button:
-        tracker_button = Button(
-            self,
-            text=text,
-            bg=tracker_button_bg,
-            fg=tracker_button_fg, 
-            font=header_font,
-            activebackground=tracker_button_active_background, 
-            relief=tracker_button_relief, 
-            width=tracker_button_width, 
-            height=tracker_button_height,
-            command=callback
-        )
-        tracker_button.grid(
-            row=row_index,
+        tracker_button = TrackerButton(
+            self, 
+            text=text, 
+            row=row_index, 
             column=column_index, 
-            padx=tracker_button_padx, 
-            pady=tracker_button_pady
+            callback_click=callback_click,
+            callback_hold=callback_hold,
         )
         return tracker_button
 
     def tracker_handler(self, tracker: dict):
         print(tracker)
+    
+    def tracker_handler_settings(self, tracker: dict):
+        print("HOLD")
 
     def __init__(self, window) -> None:
         super().__init__(window)
