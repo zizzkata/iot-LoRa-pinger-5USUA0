@@ -26,7 +26,9 @@ class LockFrame(Frame):
             self.window.set_frame(HomeFrame(self.window))
         else:
             print("Incorrect password")
+            self.password_entry.delete(0, END)
         # self.password_entry.delete(0, END)
+        
     
     def keypad_delete_handler(self):
         self.password_entry.delete(0, END)

@@ -25,6 +25,8 @@ class HomeFrame(Frame):
     def handle_add_tracker_button(self):
         pass
 
+    def handle_remove_tracker_button(self):
+        pass
 
     def __init__(self, window) -> None:
         super().__init__(window)
