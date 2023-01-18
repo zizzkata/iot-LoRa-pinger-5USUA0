@@ -1,5 +1,7 @@
 #include <SPI.h>
 #include <LoRa.h>
+#include <StringSplitter.h>
+
 
 // Seeeduino XIAO
 #define RX_PIN 7
@@ -13,19 +15,23 @@
 #define BAUD_SERIAL 115200
 
 #define BUTTON_PIN 3
+#define LED_PIN 4
 #define SPEAKER_PIN 5
 
 #define BUTTON_INTERVAL_MS 1000
 #define LORA_INTERVAL_MS 500
 
+static int led_state = LOW;
+
 static unsigned long timeWaitButton;
 static unsigned long timeWaitLoRa;
 
-static int address = 0;
+static int address = 2;
 
 void setup() {
   pinMode(BUTTON_PIN, INPUT);
   pinMode(SPEAKER_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
 
   Serial.begin(BAUD_SERIAL);
 
@@ -47,24 +53,71 @@ void loraFunctionDecoder(String msg) {
     String data = strSplitter->getItemAtIndex(3);
     String sign = strSplitter->getItemAtIndex(4);
     int codeInt = code.toInt();
+    Serial.println(codeInt);
     switch (codeInt) {
       case 5:
         sendLoRa(ping(source));
         break;
+      case 6:
+        test();
+        break;
       case 10:
-        sendLoRa();
+        // sendLoRa();
         break;
       case 100:
-        sendLoRa(setAddress(address));
+        sendLoRa(setAddress(source));
         break;
-      case 200:
-        sendLoRa(sendLoRa(data));
+      case 210:
+        handleDeviceCall(dest, source);
         break;
       default:
         Serial.println("Code not recognized");
     }
   }
   delete strSplitter;
+}
+
+String ping(String source) {
+    // if (source != "0") {
+    return "6;" + String(address) + ";" + source + ";;";
+    // }
+    // return "500;;;;";
+}
+
+String handleDeviceCall(String dest, String source) {
+  if (String(address) == dest) {
+    alarmOn();
+    sendLoRa("211;" + dest + ";" + source + ";OK;");
+  }
+}
+
+String getAddress() {
+  return "10;" + String(address) + ";OK;";
+}
+void test() {
+  if (led_state) {
+    analogWrite(SPEAKER_PIN,200);
+  } else {
+    analogWrite(SPEAKER_PIN, 200);
+  }
+  led_state = !led_state;
+}
+
+String setAddress(String recievedAddress) {
+  int recievedAddressInt = recievedAddress.toInt();
+  if (recievedAddressInt > -1) {
+    address = recievedAddressInt;
+    return "11;" + String(address) + ";OK;";
+  } else {
+    return "500;;ERROR;";
+  }
+}
+
+String sendLoRa(String msg) {
+  LoRa.beginPacket();
+  LoRa.print(msg);
+  LoRa.endPacket();
+  return "20;;OK;";
 }
 
 void handleLoRa() {
@@ -78,8 +131,25 @@ void handleLoRa() {
     }
 }
 
+void turnSpeakerOn() {
+  analogWrite(SPEAKER_PIN, 200);
+}
+
+void turnLedOn() {
+  digitalWrite(LED_PIN, HIGH);
+}
+
+void alarmOn() {
+  turnSpeakerOn();
+  turnLedOn();
+}
+
+void alarmOff() {
+  // todo
+}
+
 void handleButton() {
-  Serial.println("IAM PRESSED");
+  Serial.println(analogRead(BUTTON_PIN));
 }
 
 void loop() {
@@ -90,7 +160,7 @@ void loop() {
   }
 
   // Check for LoRa msgs
-  if ((long)(millis() - timeWaitLoRa) > 0 && (int packetSize = LoRa.parsePacket()) > 0) {
+  if (((long)(millis() - timeWaitLoRa) > 0) && (LoRa.parsePacket() > 0)) {
     handleLoRa();
     timeWaitLoRa += LORA_INTERVAL_MS;
   }

@@ -20,11 +20,21 @@
 static unsigned long timeWaitSerialHub;
 static unsigned long timeWaitLoRa;
 
-static int address = 0;  // unset
+static int address = 10;  
+
 static boolean registrationReceived = false;
 static String registrationData = "";
+
 static boolean stopCallReceived = false;
 static String stopCallSignature = "";
+
+static boolean confirmedAddressSet = false;
+static String addressDeviceSet = "";
+
+static boolean ping_sent = false;
+static boolean pingRecieved = true;
+static String sourceAddress = "";
+
 
 SoftwareSerial serialHub(RX_PIN, TX_PIN);
 // Receiving from hub
@@ -74,6 +84,7 @@ void sendSerialHub(String msg) {
   serialHub.write((msg + '\n').c_str());
 }
 
+
 void serialHubFunctionDecoder(String msg) {
   msg.trim();
   StringSplitter *strSplitter = new StringSplitter(msg, ';', 4);
@@ -97,50 +108,27 @@ void serialHubFunctionDecoder(String msg) {
       case 20:
         sendSerialHub(sendLoRa(data));
         break;
-      default:
-        Serial.println("Code not recognized");
-    }
-  }
-  delete strSplitter;
-  test(msg);
-}
-
-void loraFunctionDecoder(String msg) {
-  msg.trim();
-  StringSplitter *strSplitter = new StringSplitter(msg, ';', 5);
-  if (strSplitter->getItemCount() == 5) {
-    Serial.println("Valid string LoRa");
-    String code = strSplitter->getItemAtIndex(0);
-    String source = strSplitter->getItemAtIndex(1);
-    String dest = strSplitter->getItemAtIndex(2);
-    String data = strSplitter->getItemAtIndex(3);
-    String sign = strSplitter->getItemAtIndex(4);
-    int codeInt = code.toInt();
-    switch (codeInt) {
-      case 5:
-        sendLoRa(ping(source));
-        break;
-      case 10:
-        sendLoRa();
-        break;
-      case 100:
-        sendLoRa(setAddress(address));
-        break;
       case 200:
-        sendLoRa(sendLoRa(data));
-        break;
+        sendSerialHub(pingSerial(data));
+      case 210:
+        sendSerialHub(callDevice(data));
       default:
         Serial.println("Code not recognized");
     }
   }
   delete strSplitter;
-  test(msg);
-
+  // test(msg);
 }
 
-String ping(String source) {
+String callDevice(String addressTarget) {
+  sendLoRa("200;" + String(address) + ";" + addressTarget + ";;");
+  return "210;;OK;";  
+}
+
+String pingSerial(String source) {
+    sendLoRa(pingLoRa(source));
     // if (source != "0") {
-    return "6;" + String(address) + ";" + String(source) + ";;";
+    return "6;" + String(address) + ";" + source + ";";
     // }
     // return "500;;;;";
 }
@@ -185,6 +173,54 @@ void test(String msg) {
   Serial.println("END");
 }
 
+
+String sendLoRa(String msg) {
+  LoRa.beginPacket();
+  LoRa.print(msg);
+  LoRa.endPacket();
+  return "20;;OK -> ;";
+}
+
+//// LoRa
+
+void loraFunctionDecoder(String msg) {
+  msg.trim();
+  StringSplitter *strSplitter = new StringSplitter(msg, ';', 5);
+  if (strSplitter->getItemCount() == 5) {
+    Serial.println("Valid string LoRa");
+    String code = strSplitter->getItemAtIndex(0);
+    String source = strSplitter->getItemAtIndex(1);
+    String dest = strSplitter->getItemAtIndex(2);
+    String data = strSplitter->getItemAtIndex(3);
+    String sign = strSplitter->getItemAtIndex(4);
+    int codeInt = code.toInt();
+    switch (codeInt) {
+      case 5: // Ping recieve
+        sendLoRa(pingLoRa(source));
+        break;
+      case 6: // Ping response
+        Serial.println("Ping received from " + source);
+        handlePingRecevied(source);
+        break;
+      case 11: // Address set up
+                
+        sendLoRa(getAddress());
+        break;
+      // case 100:
+      //   sendLoRa(setAddress(address));
+      //   break;
+      case 200:
+        sendLoRa(sendLoRa(data));
+        break;
+      default:
+        Serial.println("Code not recognized");
+    }
+  }
+  delete strSplitter;
+  test(msg);
+
+}
+
 void handleLoRa() {
     String msg = "";
     // read packet
@@ -196,13 +232,28 @@ void handleLoRa() {
     }    
 }
 
-String sendLoRa(String msg) {
-  LoRa.beginPacket();
-  LoRa.print(msg);
-  LoRa.endPacket();
-  return "20;;OK -> ;";
+String pingLoRa(String source) {
+  ping_sent = true;
+  return "5;" + String(address) + ";" + source + ";;";
 }
 
+void handlePingRecevied(String source_address) {
+  if (ping_sent) {
+    pingRecieved = true;
+    sourceAddress = source_address;
+    ping_sent = false;
+  }
+}
+
+void handleWakeUpSet(String address) {
+  if (!confirmedAddressSet) {
+    confirmedAddressSet = true;
+    addressDeviceSet = address;
+  }
+}
+
+
+//////
 void setup() {
   // Set up serial
   pinMode(RX_PIN, INPUT);
@@ -234,7 +285,7 @@ void loop() {
   }
 
   // Check for LoRa msgs
-  if ((long)(millis() - timeWaitLoRa) > 0 && (int packetSize = LoRa.parsePacket()) > 0) {
+  if ((long)(millis() - timeWaitLoRa) > 0 && (LoRa.parsePacket() > 0)) {
     
     timeWaitLoRa += LORA_INTERVAL_MS;
   }
