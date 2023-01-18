@@ -41,10 +41,10 @@ class TrackersFrame(Frame):
         return tracker_button
 
     def tracker_handler(self, tracker: dict):
-        print(tracker)
-        tc.call_tracker(tracker);
+        tc.call_tracker(tracker)
     
     def tracker_handler_settings(self, tracker: dict):
+        print("HOLD")
         settings = TrackerInfo(self.window, tracker)
 
     def __init__(self, window) -> None:

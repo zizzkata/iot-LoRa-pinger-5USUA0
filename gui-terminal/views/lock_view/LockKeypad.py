@@ -26,8 +26,8 @@ class LockKeypad(Frame):
         for index, value in enumerate(num_pad_numbers):
             row_index: int = index // 3
             column_index: int = index % 3
-            if index == len(num_pad_numbers) - 1:
-                column_index = 1 # define center
+            # if index == len(num_pad_numbers) - 1:
+            #     column_index = 1 # define center
             button_list.append(
                 self.create_button(
                     str(value),
@@ -120,7 +120,7 @@ class LockKeypad(Frame):
         self.accept_handler = accept_handler
         self.delete_handler = delete_handler
         # self.pack()
-        # self.configure(bg="black")
+        self.configure(bg="black")
         self.style = ttk.Style()
         self.style.configure(
             "Rounded.TButton", relief="sunken", borderradius=border_radius)

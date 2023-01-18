@@ -1,6 +1,6 @@
 from models.serial import SerialCommunicator
 from threading import Thread, Lock
-from services.serial_services import get_status
+import services.serial_services as services
 from config import enable_daemon, serial_port, serial_baudrate, status_request_interval
 import time
 
@@ -48,7 +48,8 @@ def serial_daemon():
     if serial:
         while running:
             if (time.time() - last_time_status_sent) > status_request_interval:
-                post_job(get_status, (serial,))
+                # post_job(services.get_status, (serial,))
+                post_job(services.ping_tracker, (serial,1,))
                 last_time_status_sent = time.time()
             run_job(serial)
             time.sleep(daemon_sleep_time)

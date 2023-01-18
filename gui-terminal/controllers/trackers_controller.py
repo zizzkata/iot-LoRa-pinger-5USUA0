@@ -18,7 +18,7 @@ def load_trackers(callback):
     threaded_task(threaded_func, ())
 
 def ping_tracker(tracker):
-    post_job(serial_services.ping_tracker, (serial, tracker.id))
+    post_job(serial_services.ping_tracker, (serial, tracker['id']))
 
 def call_tracker(tracker):
-    post_job(serial_services.start_call, (serial, tracker.id))
+    post_job(serial_services.start_call, (serial, tracker['id']))

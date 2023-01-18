@@ -48,7 +48,6 @@ class LockFrame(Frame):
             font=header_font,
             bg=center_label_bg,
             fg=center_label_fg,
-            text=center_label_text
         )
         self.password_entry = Entry(self, show="*", font=header_font, bg="black", fg="white", justify="center", width=23)
         self.center_label.grid(row=0, column=0, pady=40)
