@@ -8,10 +8,10 @@ def kill_program(main):
 
 
 if __name__ == "__main__":
-    main = mw.MainWindow()
     sm.start_serial_daemon()
-    main.protocol("WM_DELETE_WINDOW", lambda x=main: kill_program(x))
     if (len(sys.argv) <= 1 or sys.argv[1] != "--headless"):
+        main = mw.MainWindow()
+        main.protocol("WM_DELETE_WINDOW", lambda x=main: kill_program(x))
         main.mainloop()
     else:
         while(True):
