@@ -13,14 +13,17 @@ def _get_res(command: str, sleep_time: float, serial: SerialCommunicator):
     return parse_serial_output(serial.receive())
 
 def get_status(serial: SerialCommunicator):
-    command = "5;;;"
-    response = _get_res(command, serial_wait_time_medium, serial)
-    if response:
-        print(response)
-        if response['option'] == "1":
-            sm.post_job(get_registration, (serial))
-        elif response['option'] == "2":
-            sm.post_job(stop_call_received, (response['data'], response['sign']))
+    try:
+        command = "5;;;"
+        response = _get_res(command, serial_wait_time_medium, serial)
+        if response:
+            print(response)
+            if response['option'] == "1":
+                sm.post_job(get_registration, (serial))
+            elif response['option'] == "2":
+                sm.post_job(stop_call_received, (response['data'], response['sign']))
+    except Exception as e:
+        print(e)
 
 def get_registration(serial: SerialCommunicator):
     command = "110;;;"
@@ -33,26 +36,34 @@ def stop_call_received(address: str, signature: str):
     pass
 
 def start_call(serial: SerialCommunicator, address: str):
-    computeSignature = ""
-    command = "1;{};OK;{}".format(address, computeSignature)
-    response = _get_res(command, serial_wait_time_medium, serial)
-    if response:
-        if response['data'] == "OK":
-            # callback
+    try:
+        computeSignature = ""
+        command = "210;;{};{}".format(address, computeSignature)
+        response = _get_res(command, serial_wait_time_medium, serial)
+        if response:
+            if response['data'] == "OK":
+                # callback
+                pass
+            else:
+                # callback
+                pass
             pass
-        else:
-            # callback
-            pass
-        pass
+    except Exception as e:
+        print(e)
+        
+    
 
-def ping_tracker(id: str, serial: SerialCommunicator):
-    command = "5;{};;;".format(id)
-    response = _get_res(command, serial_wait_time_medium, serial)
-    if response:
-        if response['data'] == "OK":
-            print(response)
+def ping_tracker(serial: SerialCommunicator, id: int):
+    try:
+        command = "200;;{};".format(id)
+        response = _get_res(command, serial_wait_time_medium, serial)
+        if response:
+            if response['data'] == "OK":
+                print(response)
+                pass
+            else:
+                print(response)
+                pass
             pass
-        else:
-            print(response)
-            pass
-        pass
+    except Exception as e:
+        print(e)
