@@ -40,6 +40,7 @@ class LockFrame(Frame):
         self.configure(bg="black")
         self.center_label = Label(
             self,
+            text=center_label_text,
             font=header_font,
             bg=center_label_bg,
             fg=center_label_fg,

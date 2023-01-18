@@ -42,6 +42,7 @@ class TrackersFrame(Frame):
 
     def tracker_handler(self, tracker: dict):
         print(tracker)
+        tc.call_tracker(tracker);
     
     def tracker_handler_settings(self, tracker: dict):
         settings = TrackerInfo(self.window, tracker)
