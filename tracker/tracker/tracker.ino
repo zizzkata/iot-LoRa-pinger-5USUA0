@@ -20,6 +20,7 @@
 
 #define SPEAKER_HIGH 200 //based on what???
 #define SPEAKER_LOW 0
+#define BUTTON_LIMIT 150
 
 #define BUTTON_INTERVAL_MS 1000
 #define LORA_INTERVAL_MS 500
@@ -166,23 +167,25 @@ void turnLedOff(){
 }
 
 void alarmOn() {
-    bool pressed = test_button();
-  if (pressed == LOW) { //no, not pressed
-    turnSpeakerOn();
-    turnLedOn();
-  }
+  //no, not pressed
+  turnSpeakerOn();
+  turnLedOn();
 }
 
 void alarmOff() {
     bool pressed = test_button();
-    if (pressed == HIGH) { //yes, pressed
+    if (button_state == HIGH) { //yes, pressed
       turnLedOff();
-      turnSpeakerOff;
+      turnSpeakerOff();
     }
 }
 
 void handleButton() {
   Serial.println(analogRead(BUTTON_PIN));
+  if (analogRead(BUTTON_PIN) <= BUTTON_LIMIT){ //pressed
+      button_state = HIGH;
+      alarmOff();
+  }
 }
 
 void loop() {
