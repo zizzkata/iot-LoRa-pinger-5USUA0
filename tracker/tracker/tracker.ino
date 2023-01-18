@@ -107,6 +107,16 @@ void test() {
 }
 
 bool test_button() {
+  
+  if (analogRead(SPEAKER_PIN, SPEAKER_HIGH)){
+    button_state = HIGH; 
+  }
+  if (digitalWrite(LED_PIN, HIGH)){
+    button_state = HIGH;
+  }
+  if (button_state == HIGH){
+    return HIGH; //button corresponds to led and speaker
+  }
 
 }
 
