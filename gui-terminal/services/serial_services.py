@@ -38,7 +38,7 @@ def stop_call_received(address: str, signature: str):
 def start_call(serial: SerialCommunicator, address: str):
     try:
         computeSignature = ""
-        command = "210;;{};{}".format(address, computeSignature)
+        command = "210;0;{};{}".format(address, computeSignature)
         response = _get_res(command, serial_wait_time_medium, serial)
         if response:
             if response['data'] == "OK":
@@ -55,7 +55,7 @@ def start_call(serial: SerialCommunicator, address: str):
 
 def ping_tracker(serial: SerialCommunicator, id: int):
     try:
-        command = "200;;{};".format(id)
+        command = "200;0;{};".format(id)
         response = _get_res(command, serial_wait_time_medium, serial)
         if response:
             if response['data'] == "OK":

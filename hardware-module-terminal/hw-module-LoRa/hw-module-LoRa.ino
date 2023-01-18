@@ -112,6 +112,7 @@ void serialHubFunctionDecoder(String msg) {
         sendSerialHub(pingSerial(data));
       case 210:
         sendSerialHub(callDevice(data));
+        break;
       default:
         Serial.println("Code not recognized");
     }
@@ -121,7 +122,8 @@ void serialHubFunctionDecoder(String msg) {
 }
 
 String callDevice(String addressTarget) {
-  sendLoRa("200;" + String(address) + ";" + addressTarget + ";;");
+  // Serial.println(addressTarget);
+  sendLoRa("210;" + String(address) + ";" + addressTarget + ";;");
   return "210;;OK;";  
 }
 
