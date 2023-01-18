@@ -18,10 +18,14 @@
 #define LED_PIN 4
 #define SPEAKER_PIN 5
 
+#define SPEAKER_HIGH 200 //based on what???
+#define SPEAKER_LOW 0
+
 #define BUTTON_INTERVAL_MS 1000
 #define LORA_INTERVAL_MS 500
 
 static int led_state = LOW;
+static int button_state = LOW;
 
 static unsigned long timeWaitButton;
 static unsigned long timeWaitLoRa;
@@ -102,6 +106,10 @@ void test() {
   led_state = !led_state;
 }
 
+bool test_button() {
+
+}
+
 String setAddress(String recievedAddress) {
   int recievedAddressInt = recievedAddress.toInt();
   if (recievedAddressInt > -1) {
@@ -130,21 +138,37 @@ void handleLoRa() {
     }
 }
 
+// speaker actions
 void turnSpeakerOn() {
-  analogWrite(SPEAKER_PIN, 200);
+  analogWrite(SPEAKER_PIN, SPEAKER_HIGH);
 }
 
+void turnSpeakerOff(){
+  analogWrite(SPEAKER_PIN, SPEAKER_LOW);
+}
+// led actions
 void turnLedOn() {
   digitalWrite(LED_PIN, HIGH);
 }
 
+void turnLedOff(){
+  digitalWrite(LED_PIN, LOW);
+}
+
 void alarmOn() {
-  turnSpeakerOn();
-  turnLedOn();
+    bool pressed = test_button();
+  if (pressed == LOW) { //no, not pressed
+    turnSpeakerOn();
+    turnLedOn();
+  }
 }
 
 void alarmOff() {
-  // todo
+    bool pressed = test_button();
+    if (pressed == HIGH) { //yes, pressed
+      turnLedOff();
+      turnSpeakerOff;
+    }
 }
 
 void handleButton() {
