@@ -53,7 +53,6 @@ void loraFunctionDecoder(String msg) {
     String data = strSplitter->getItemAtIndex(3);
     String sign = strSplitter->getItemAtIndex(4);
     int codeInt = code.toInt();
-    Serial.println(codeInt);
     switch (codeInt) {
       case 5:
         sendLoRa(ping(source));
