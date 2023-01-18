@@ -30,7 +30,7 @@ def run_job(serial: SerialCommunicator):
     job_run = False
     if len(jobs) > 0:
         (target, args) = jobs.pop(0)
-        target(args[0])
+        target(*args)
     lock.release()
     return job_run
     
