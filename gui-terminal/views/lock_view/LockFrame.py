@@ -27,6 +27,10 @@ class LockFrame(Frame):
         else:
             print("Incorrect password")
             self.password_entry.delete(0, END)
+            self.center_label.config(text="Incorrect code")
+            self.center_label.after(3000, lambda:self.center_label.config(text="Enter code", fg="red"))
+
+
         # self.password_entry.delete(0, END)
         
     
@@ -44,6 +48,7 @@ class LockFrame(Frame):
             font=header_font,
             bg=center_label_bg,
             fg=center_label_fg,
+            text=center_label_text
         )
         self.password_entry = Entry(self, show="*", font=header_font, bg="black", fg="white", justify="center", width=23)
         self.center_label.grid(row=0, column=0, pady=40)
