@@ -7,6 +7,10 @@ header_font: str = ("Bahnschrift SemiCondensed", 14)
 button_font: str = ("Bahnschrift SemiCondensed", 14)
 
 # Data paths
+# users_file_path: str = relative_path + "/data/user.json"
+# devices_file_path: str = relative_path + "/data/devices.json"
+# pub_key_file_path: str = relative_path + "/data/key.pub"
+# private_key_file_path: str = relative_path + "/data/key"
 users_file_path: str = relative_path + "\\data\\user.json"
 devices_file_path: str = relative_path + "\\data\\devices.json"
 pub_key_file_path: str = relative_path + "\\data\\key.pub"
