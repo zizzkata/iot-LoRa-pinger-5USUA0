@@ -3,7 +3,7 @@ from tkinter import ttk
 from config import *
 
 border_radius: int = 10
-num_pad_numbers: list = range(10)
+num_pad_numbers: list = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 button_style: str = "Rounded.TButton"
 button_padx: int = 5
 button_pady: int = 5
@@ -11,8 +11,8 @@ keypad_button_bg: str = "grey30"
 keypad_button_fg: str = "white"
 keypad_button_active_background : str = "green"
 keypad_button_relief: str = "sunken"
-keypad_button_width: int = 6
-keypad_button_height: int = 2
+keypad_button_width: int = 5
+keypad_button_height: int = 3
 
 accept_button_bg: str = "green"
 accept_button_fg: str = "black"
@@ -23,7 +23,7 @@ delete_button_fg: str = "black"
 class LockKeypad(Frame):
     def create_buttons(self):
         button_list: list = []
-        for index, value in enumerate(reversed(num_pad_numbers)):
+        for index, value in enumerate(num_pad_numbers):
             row_index: int = index // 3
             column_index: int = index % 3
             if index == len(num_pad_numbers) - 1:
@@ -44,8 +44,8 @@ class LockKeypad(Frame):
             )
         accept_button = self.create_button(
             "Accept",
-            4,  # row
-            0,  # column
+            3,  # row
+            2,  # column
             accept_button_bg,
             accept_button_fg,
             keypad_button_active_background,
@@ -55,10 +55,24 @@ class LockKeypad(Frame):
             self.accept_handler
         )
         button_list.append(accept_button)
+        zero_button = self.create_button(
+            "0",
+            3,  # row
+            1,  # column
+            keypad_button_bg,
+            keypad_button_fg,
+            keypad_button_active_background,
+            keypad_button_relief,
+            keypad_button_width,
+            keypad_button_height,
+            lambda x = 0: self.insert_number_handler(x)
+        )
+        button_list.append(zero_button)
+
         delete_button = self.create_button(
             "Delete",
-            4,  # row
-            2,  # column
+            3,  # row
+            0,  # column
             delete_button_bg,
             delete_button_fg,
             keypad_button_active_background,
