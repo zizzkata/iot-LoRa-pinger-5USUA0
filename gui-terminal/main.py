@@ -1,3 +1,4 @@
+import sys
 import views.MainWindow as mw
 import models.serial_model as sm
 
@@ -10,4 +11,8 @@ if __name__ == "__main__":
     main = mw.MainWindow()
     sm.start_serial_daemon()
     main.protocol("WM_DELETE_WINDOW", lambda x=main: kill_program(x))
-    main.mainloop()
+    if (len(sys.argv) <= 1 or sys.argv[1] != "--headless"):
+        main.mainloop()
+    else:
+        while(True):
+            pass
