@@ -1,5 +1,5 @@
 from models.serial import SerialCommunicator
-from models.serial_model import post_job
+import models.serial_model as sm
 from time import sleep
 from utils.serial_parser import parse_serial_output
 
@@ -16,10 +16,11 @@ def get_status(serial: SerialCommunicator):
     command = "5;;;"
     response = _get_res(command, serial_wait_time_medium, serial)
     if response:
+        print(response)
         if response['option'] == "1":
-            post_job(get_registration, (serial))
+            sm.post_job(get_registration, (serial))
         elif response['option'] == "2":
-            post_job(stop_call_received, (response['data'], response['sign']))
+            sm.post_job(stop_call_received, (response['data'], response['sign']))
 
 def get_registration(serial: SerialCommunicator):
     command = "110;;;"
@@ -41,5 +42,17 @@ def start_call(serial: SerialCommunicator, address: str):
             pass
         else:
             # callback
+            pass
+        pass
+
+def ping_tracker(id: str, serial: SerialCommunicator):
+    command = "5;{};;;".format(id)
+    response = _get_res(command, serial_wait_time_medium, serial)
+    if response:
+        if response['data'] == "OK":
+            print(response)
+            pass
+        else:
+            print(response)
             pass
         pass
