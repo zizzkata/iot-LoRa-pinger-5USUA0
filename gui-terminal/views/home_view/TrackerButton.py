@@ -30,7 +30,7 @@ class TrackerButton(Button):
             self.click_callback()
         self.timePressed = time.time()
 
-    def __init__(self, master: Misc | None = ..., *,
+    def __init__(self, master,
         text: str,
         row: int,
         column: int,

@@ -12,7 +12,7 @@ jobs = []
 
 def kill_deamon():
     global running
-    serial = False
+    running = False
 
 def post_job(target, args):
     global jobs, lock, serial
