@@ -185,7 +185,7 @@ void handleButton() {
   Serial.println(analogRead(BUTTON_PIN));
   if (analogRead(BUTTON_PIN) <= BUTTON_LIMIT){ //yes, pressed
       button_state = HIGH;
-      alarmOff(button_state);
+      alarmAction(button_state);
   }
 }
 
