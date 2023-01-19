@@ -90,7 +90,7 @@ String ping(String source) {
 
 String handleDeviceCall(String dest, String source) {
   if (String(address) == dest) {
-    alarmOn();
+    alarmAction();
     sendLoRa("211;" + dest + ";" + source + ";OK;");
   }
 }
@@ -107,19 +107,18 @@ void test() {
   led_state = !led_state;
 }
 
-bool test_button() {
+// bool test_button() {
   
-  if (analogRead(SPEAKER_PIN, SPEAKER_HIGH)){
-    button_state = HIGH; 
-  }
-  if (digitalWrite(LED_PIN, HIGH)){
-    button_state = HIGH;
-  }
-  if (button_state == HIGH){
-    return HIGH; //button corresponds to led and speaker
-  }
-
-}
+//   if (analogRead(SPEAKER_PIN, SPEAKER_HIGH)){
+//     button_state = HIGH; 
+//   }
+//   if (digitalRead(LED_PIN, HIGH)){
+//     button_state = HIGH;
+//   }
+//   if (button_state == HIGH){
+//     return HIGH; //button corresponds to led and speaker
+//   }
+// }
 
 String setAddress(String recievedAddress) {
   int recievedAddressInt = recievedAddress.toInt();
@@ -153,38 +152,40 @@ void handleLoRa() {
 void turnSpeakerOn() {
   analogWrite(SPEAKER_PIN, SPEAKER_HIGH);
 }
-
 void turnSpeakerOff(){
   analogWrite(SPEAKER_PIN, SPEAKER_LOW);
 }
+
 // led actions
 void turnLedOn() {
   digitalWrite(LED_PIN, HIGH);
 }
-
 void turnLedOff(){
   digitalWrite(LED_PIN, LOW);
 }
 
-void alarmOn() {
-  //no, not pressed
-  turnSpeakerOn();
-  turnLedOn();
-}
+// void alarmOn() {
+//   turnSpeakerOn();
+//   turnLedOn();
+// }
 
-void alarmOff() {
-    bool pressed = test_button();
+void alarmAction(button_state) {
     if (button_state == HIGH) { //yes, pressed
       turnLedOff();
       turnSpeakerOff();
+      button_state = LOW;
+    }
+    else if (button_state == LOW) { //no, not pressed
+      turnLedOn();
+      turnSpeakerOn();
     }
 }
 
 void handleButton() {
   Serial.println(analogRead(BUTTON_PIN));
-  if (analogRead(BUTTON_PIN) <= BUTTON_LIMIT){ //pressed
+  if (analogRead(BUTTON_PIN) <= BUTTON_LIMIT){ //yes, pressed
       button_state = HIGH;
-      alarmOff();
+      alarmOff(button_state);
   }
 }
 
