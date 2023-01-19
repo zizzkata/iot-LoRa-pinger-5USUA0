@@ -18,10 +18,15 @@
 #define LED_PIN 4
 #define SPEAKER_PIN 5
 
+#define SPEAKER_HIGH 200 //based on what???
+#define SPEAKER_LOW 0
+#define BUTTON_LIMIT 150
+
 #define BUTTON_INTERVAL_MS 1000
 #define LORA_INTERVAL_MS 500
 
 static int led_state = LOW;
+static int button_state = LOW;
 
 static unsigned long timeWaitButton;
 static unsigned long timeWaitLoRa;
@@ -85,7 +90,7 @@ String ping(String source) {
 
 String handleDeviceCall(String dest, String source) {
   if (String(address) == dest) {
-    alarmOn();
+    alarmAction();
     sendLoRa("211;" + dest + ";" + source + ";OK;");
   }
 }
@@ -101,6 +106,19 @@ void test() {
   }
   led_state = !led_state;
 }
+
+// bool test_button() {
+  
+//   if (analogRead(SPEAKER_PIN, SPEAKER_HIGH)){
+//     button_state = HIGH; 
+//   }
+//   if (digitalRead(LED_PIN, HIGH)){
+//     button_state = HIGH;
+//   }
+//   if (button_state == HIGH){
+//     return HIGH; //button corresponds to led and speaker
+//   }
+// }
 
 String setAddress(String recievedAddress) {
   int recievedAddressInt = recievedAddress.toInt();
@@ -130,25 +148,45 @@ void handleLoRa() {
     }
 }
 
+// speaker actions
 void turnSpeakerOn() {
-  analogWrite(SPEAKER_PIN, 200);
+  analogWrite(SPEAKER_PIN, SPEAKER_HIGH);
+}
+void turnSpeakerOff(){
+  analogWrite(SPEAKER_PIN, SPEAKER_LOW);
 }
 
+// led actions
 void turnLedOn() {
   digitalWrite(LED_PIN, HIGH);
 }
-
-void alarmOn() {
-  turnSpeakerOn();
-  turnLedOn();
+void turnLedOff(){
+  digitalWrite(LED_PIN, LOW);
 }
 
-void alarmOff() {
-  // todo
+// void alarmOn() {
+//   turnSpeakerOn();
+//   turnLedOn();
+// }
+
+void alarmAction(button_state) {
+    if (button_state == HIGH) { //yes, pressed
+      turnLedOff();
+      turnSpeakerOff();
+      button_state = LOW;
+    }
+    else if (button_state == LOW) { //no, not pressed
+      turnLedOn();
+      turnSpeakerOn();
+    }
 }
 
 void handleButton() {
   Serial.println(analogRead(BUTTON_PIN));
+  if (analogRead(BUTTON_PIN) <= BUTTON_LIMIT){ //yes, pressed
+      button_state = HIGH;
+      alarmAction(button_state);
+  }
 }
 
 void loop() {
