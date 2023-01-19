@@ -8,11 +8,11 @@ button_style: str = "Rounded.TButton"
 button_padx: int = 5
 button_pady: int = 5
 keypad_button_bg: str = "grey30"
-keypad_button_fg: str = "white"
-keypad_button_active_background : str = "green"
+keypad_button_fg: str = "black"
+keypad_button_active_background : str = "black"
 keypad_button_relief: str = "sunken"
-keypad_button_width: int = 5
-keypad_button_height: int = 3
+keypad_button_width: int = 7
+keypad_button_height: int = 4
 
 accept_button_bg: str = "green"
 accept_button_fg: str = "black"
